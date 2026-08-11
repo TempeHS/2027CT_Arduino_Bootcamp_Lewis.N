@@ -42,9 +42,12 @@ const int LED_PIN = 6;     // Grove LED on D6 (PWM)
 const int BUZZER_PIN = 5;  // Grove Buzzer on D5 (PWM)
 
 void setup() {
-
+  Serial.begin(115200);
+  // note: analogue pins need NO pinMode for reading
 }
 
 void loop() {
-
+  int value = analogRead(POT_PIN);
+  Serial.println(value);
+  delay(50);
 }

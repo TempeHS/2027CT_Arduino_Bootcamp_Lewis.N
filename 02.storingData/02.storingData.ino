@@ -21,10 +21,20 @@
     https://www.arduino.cc/reference/en/language/variables/data-types/stringobject/
 */
 
-void setup() {
+int    count       = 42;          // whole numbers
+float  temperature = 23.5;        // decimal numbers
+long   bigNumber   = 100000;      // large whole numbers
+bool   isOn        = true;        // true or false
+String deviceName  = "My Arduino"; // text
 
+void setup() {
+  Serial.begin(115200);
+  Serial.println("Name: " + deviceName);
+  Serial.println("Count: " + String(count));
+  Serial.println("Temperature: " + String(temperature));
+  Serial.println("Big number: " + String(bigNumber));
+  Serial.println("Switched on: " + String(isOn));
 }
 
 void loop() {
-
 }

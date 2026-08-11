@@ -37,13 +37,63 @@
     https://www.arduino.cc/reference/en/language/functions/digital-io/digitalread/
 */
 
-const int BUTTON_PIN = 4;  // Grove Button on D4
-const int LED_PIN = 6;     // Grove LED on D6
+#include "Ultrasonic.h"
+
+const int BUZZER_PIN = 5;
+const int LED_PIN = 6;
+
+Ultrasonic ultrasonic(2);
 
 void setup() {
+  Serial.begin(115200);
+  pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(LED_PIN, OUTPUT);
+}
 
+int readDistance() {
+  return ultrasonic.read();
+}
+
+int classifyZone(int distance, int nearLimit, int farLimit) {
+  if (distance < nearLimit) {
+    return 0;
+  } else if (distance < farLimit) {
+    return 1;
+  }
+
+  return 2;
+}
+
+void showAlert(int zone) {
+  if (zone == 2) {
+    digitalWrite(LED_PIN, LOW);
+    noTone(BUZZER_PIN);
+  }
+  else if (zone == 1) {
+    digitalWrite(LED_PIN, HIGH);
+    tone(BUZZER_PIN, 1000);
+    delay(200);
+    noTone(BUZZER_PIN);
+    delay(500);
+  }
+  else {
+    digitalWrite(LED_PIN, HIGH);
+    tone(BUZZER_PIN, 1500);
+    delay(100);
+    noTone(BUZZER_PIN);
+    delay(100);
+  }
+}
+
+void logStatus(int distance, int zone) {
+  Serial.print(distance);
+  Serial.print(" cm, zone ");
+  Serial.println(zone);
 }
 
 void loop() {
-
+  int distance = readDistance();
+  int zone = classifyZone(distance, 10, 30);
+  showAlert(zone);
+  logStatus(distance, zone);
 }
