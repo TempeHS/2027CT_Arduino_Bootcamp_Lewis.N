@@ -42,10 +42,11 @@
 const int BUZZER_PIN = 5;
 const int LED_PIN = 6;
 
-Ultrasonic ultrasonic(2);
+Ultrasonic ultrasonic(2);   // Ultrasonic sensor on D2
 
 void setup() {
   Serial.begin(115200);
+
   pinMode(BUZZER_PIN, OUTPUT);
   pinMode(LED_PIN, OUTPUT);
 }
@@ -56,29 +57,38 @@ int readDistance() {
 
 int classifyZone(int distance, int nearLimit, int farLimit) {
   if (distance < nearLimit) {
-    return 0;
-  } else if (distance < farLimit) {
-    return 1;
+    return 0;              // Danger
+  }
+  else if (distance < farLimit) {
+    return 1;              // Warning
   }
 
-  return 2;
+  return 2;                // Safe
 }
 
 void showAlert(int zone) {
+
   if (zone == 2) {
-    digitalWrite(LED_PIN, LOW);
+    // Safe
+    analogWrite(LED_PIN, 0);
     noTone(BUZZER_PIN);
   }
+
   else if (zone == 1) {
-    digitalWrite(LED_PIN, HIGH);
-    tone(BUZZER_PIN, 1000);
+    // Warning
+    analogWrite(LED_PIN, 127);
+
+    tone(BUZZER_PIN, 523);
     delay(200);
     noTone(BUZZER_PIN);
     delay(500);
   }
+
   else {
-    digitalWrite(LED_PIN, HIGH);
-    tone(BUZZER_PIN, 1500);
+    // Danger
+    analogWrite(LED_PIN, 255);
+
+    tone(BUZZER_PIN, 1000);
     delay(100);
     noTone(BUZZER_PIN);
     delay(100);
@@ -94,6 +104,7 @@ void logStatus(int distance, int zone) {
 void loop() {
   int distance = readDistance();
   int zone = classifyZone(distance, 10, 30);
+
   showAlert(zone);
   logStatus(distance, zone);
 }
