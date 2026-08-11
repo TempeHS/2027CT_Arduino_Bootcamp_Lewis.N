@@ -37,74 +37,29 @@
     https://www.arduino.cc/reference/en/language/functions/digital-io/digitalread/
 */
 
-#include "Ultrasonic.h"
-
-const int BUZZER_PIN = 5;
-const int LED_PIN = 6;
-
-Ultrasonic ultrasonic(2);   // Ultrasonic sensor on D2
+const int BUTTON_PIN = 4;  // Grove Button on D4
+const int LED_PIN = 6;     // Grove LED on D6
 
 void setup() {
-  Serial.begin(115200);
-
-  pinMode(BUZZER_PIN, OUTPUT);
   pinMode(LED_PIN, OUTPUT);
-}
-
-int readDistance() {
-  return ultrasonic.read();
-}
-
-int classifyZone(int distance, int nearLimit, int farLimit) {
-  if (distance < nearLimit) {
-    return 0;              // Danger
-  }
-  else if (distance < farLimit) {
-    return 1;              // Warning
-  }
-
-  return 2;                // Safe
-}
-
-void showAlert(int zone) {
-
-  if (zone == 2) {
-    // Safe
-    analogWrite(LED_PIN, 0);
-    noTone(BUZZER_PIN);
-  }
-
-  else if (zone == 1) {
-    // Warning
-    analogWrite(LED_PIN, 127);
-
-    tone(BUZZER_PIN, 523);
-    delay(200);
-    noTone(BUZZER_PIN);
-    delay(500);
-  }
-
-  else {
-    // Danger
-    analogWrite(LED_PIN, 255);
-
-    tone(BUZZER_PIN, 1000);
-    delay(100);
-    noTone(BUZZER_PIN);
-    delay(100);
-  }
-}
-
-void logStatus(int distance, int zone) {
-  Serial.print(distance);
-  Serial.print(" cm, zone ");
-  Serial.println(zone);
+  pinMode(BUTTON_PIN, INPUT);   // this pin will RECEIVE signals
+  Serial.begin(115200);
 }
 
 void loop() {
-  int distance = readDistance();
-  int zone = classifyZone(distance, 10, 30);
+  int reading = random(0, 100);
+  Serial.print("Reading: ");
+  Serial.println(reading);
 
-  showAlert(zone);
-  logStatus(distance, zone);
+  if (reading > 80) {
+    Serial.println("  VERY HIGH");
+  } else if (reading > 50) {
+    Serial.println("  HIGH");
+  } else if (reading > 20) {
+    Serial.println("  MEDIUM");
+  } else {
+    Serial.println("  LOW");
+  }
+
+  delay(1000);
 }

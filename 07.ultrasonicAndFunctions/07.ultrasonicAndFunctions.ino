@@ -37,53 +37,15 @@
 
 #include "Ultrasonic.h"
 
-Ultrasonic ultrasonic(2);   // Grove 3-pin sensor: trigger and echo share D2
+const int BUZZER_PIN = 5;
+const int LED_PIN = 6;
+
+Ultrasonic ultrasonic(2);
 
 void setup() {
   Serial.begin(115200);
-
-  pinMode(5, OUTPUT);  // Buzzer
-  pinMode(6, OUTPUT);  // LED
-}
-
-int readDistance() {
-  return ultrasonic.read();
-}
-
-int classifyZone(int distance, int nearLimit, int farLimit) {
-  if (distance < nearLimit) {
-    return 0;              // danger
-  } else if (distance < farLimit) {
-    return 1;              // warning
-  }
-  return 2;                // safe
-}
-
-void showAlert(int zone) {
-  if (zone == 2) {
-    digitalWrite(6, LOW);
-    noTone(5);
-  }
-  else if (zone == 1) {
-    digitalWrite(6, HIGH);
-    tone(5, 1000);
-    delay(200);
-    noTone(5);
-    delay(500);
-  }
-  else if (zone == 0) {
-    digitalWrite(6, HIGH);
-    tone(5, 1500);
-    delay(100);
-    noTone(5);
-    delay(100);
-  }
-}
-
-void logStatus(int distance, int zone) {
-  Serial.print(distance);
-  Serial.print(" cm, zone ");
-  Serial.println(zone);
+  pinMode(LED_PIN, OUTPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
 }
 
 void loop() {
