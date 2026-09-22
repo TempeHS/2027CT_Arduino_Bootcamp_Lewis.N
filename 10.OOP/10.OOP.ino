@@ -20,10 +20,73 @@
     https://youtu.be/cUVryWbVkXk
 */
 
-void setup() {
+class Button {
+  private:
+    int pin;
 
+  public:
+    Button(int buttonPin) {
+      pin = buttonPin;
+    }
+
+    void begin() {
+      pinMode(pin, INPUT);
+    }
+
+    bool isPressed() {
+      return digitalRead(pin) == HIGH;
+    }
+};
+
+class Led {
+  private:
+    int pin;
+    bool isOn;
+
+  public:
+    Led(int ledPin) {
+      pin = ledPin;
+      isOn = false;
+    }
+
+    void begin() {
+      pinMode(pin, OUTPUT);
+      digitalWrite(pin, LOW);
+    }
+
+    void turnOn() {
+      digitalWrite(pin, HIGH);
+      isOn = true;
+    }
+
+    void turnOff() {
+      digitalWrite(pin, LOW);
+      isOn = false;
+    }
+
+    void toggle() {
+      if (isOn) {
+        turnOff();
+      } else {
+        turnOn();
+      }
+    }
+};
+
+Button button(4);
+Led moduleLed(6);
+Led builtinLed(13);
+
+void setup() {
+  button.begin();
+  moduleLed.begin();
+  builtinLed.begin();
 }
 
 void loop() {
-
+  if (button.isPressed()) {
+    moduleLed.toggle();
+    builtinLed.toggle();
+    delay(500);
+  }
 }

@@ -1,5 +1,5 @@
 /*
-  Author: 
+  Author:
   Learning Intention: Students will build a monitoring system that watches
   conditions and raises alerts, like the guardian inside a smart fridge
 
@@ -29,10 +29,73 @@
   Suggested Grove ports: Light A3, Buzzer D5, LED D6
 */
 
-void setup() {
+const int LIGHT_PIN = A3;
+const int BUZZER_PIN = 5;
+const int LED_PIN = 6;
 
+// Replace these with YOUR calibration measurements
+// Covered: 150
+// Uncovered: 750
+const int DOOR_OPEN_THRESHOLD = 450;
+
+const unsigned long OPEN_TIME = 10000;
+const unsigned long FLASH_INTERVAL = 500;
+
+unsigned long doorOpenStart = 0;
+unsigned long lastFlash = 0;
+
+bool doorTimerStarted = false;
+bool alarmState = false;
+
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(LED_PIN, OUTPUT);
+
+  digitalWrite(BUZZER_PIN, LOW);
+  digitalWrite(LED_PIN, LOW);
 }
 
 void loop() {
+  unsigned long currentTime = millis();
 
+  int lightLevel = analogRead(LIGHT_PIN);
+
+  bool doorOpen = lightLevel > DOOR_OPEN_THRESHOLD;
+
+  // Serial Plotter
+  Serial.print("Light:");
+  Serial.print(lightLevel);
+  Serial.print("\tDoor:");
+  Serial.println(doorOpen ? 1 : 0);
+
+  if (doorOpen) {
+
+    if (!doorTimerStarted) {
+      doorOpenStart = currentTime;
+      doorTimerStarted = true;
+    }
+
+    if (currentTime - doorOpenStart >= OPEN_TIME) {
+
+      if (currentTime - lastFlash >= FLASH_INTERVAL) {
+        lastFlash = currentTime;
+
+        alarmState = !alarmState;
+
+        digitalWrite(LED_PIN, alarmState ? HIGH : LOW);
+        digitalWrite(BUZZER_PIN, alarmState ? HIGH : LOW);
+      }
+    }
+
+  } else {
+
+    // Door closed
+    doorTimerStarted = false;
+    alarmState = false;
+
+    digitalWrite(LED_PIN, LOW);
+    digitalWrite(BUZZER_PIN, LOW);
+  }
 }

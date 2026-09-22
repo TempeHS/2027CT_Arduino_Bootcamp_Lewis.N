@@ -42,7 +42,7 @@ void setup() {
   myServo.write(90);           // move to the middle
 }
 
-  void loop() {
+void loop() {
   myServo.write(0);
   delay(1000);
   myServo.write(45);
@@ -51,4 +51,18 @@ void setup() {
   delay(1000);
   myServo.write(180);
   delay(1000);
+}
+
+void smoothMove(int fromAngle, int toAngle) {
+  if (fromAngle < toAngle) {
+    for (int a = fromAngle; a <= toAngle; a++) {
+      myServo.write(a);
+      delay(15);
+    }
+  } else {
+    for (int a = fromAngle; a >= toAngle; a--) {
+      myServo.write(a);
+      delay(15);
+    }
+  }
 }

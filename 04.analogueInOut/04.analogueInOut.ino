@@ -42,12 +42,33 @@ const int LED_PIN = 6;     // Grove LED on D6 (PWM)
 const int BUZZER_PIN = 5;  // Grove Buzzer on D5 (PWM)
 
 void setup() {
+  pinMode(LED_PIN, OUTPUT);      // D6: PWM output later
+  pinMode(BUZZER_PIN, OUTPUT);   // D5: tone output later
   Serial.begin(115200);
-  // note: analogue pins need NO pinMode for reading
+  // POT_PIN needs no pinMode: analogRead works on A0 as-is
+    Serial.println(7 / 2);        // prediction: ?
+  Serial.println(7.0 / 2);      // prediction: ?
+  Serial.println(2 + 3 * 4);    // prediction: ?
+  Serial.println((2 + 3) * 4);  // prediction: ?
+  Serial.println(7 % 3);        // prediction: ?
 }
 
 void loop() {
   int value = analogRead(POT_PIN);
   Serial.println(value);
   delay(50);
+    analogWrite(LED_PIN, 0);
+  delay(1000);
+  analogWrite(LED_PIN, 64);    // 25 percent duty
+  delay(1000);
+  analogWrite(LED_PIN, 127);   // 50 percent duty
+  delay(1000);
+  analogWrite(LED_PIN, 255);   // always on
+  delay(1000);
+    tone(BUZZER_PIN, 262);   // middle C
+  delay(500);
+  tone(BUZZER_PIN, 523);   // C an octave up
+  delay(500);
+  noTone(BUZZER_PIN);      // silence
+  delay(500);
 }
